@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>永久导航域名：灰灰.top</title>
+    <meta name="description" content="灰灰旺号：700833448">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* ========== 全局颜色变量 ========== */
+        :root {
+            --primary-bg: #231f1b;
+            --card-bg: rgba(50, 45, 40, 0.55);
+            --text-main: #f0e6d3;
+            --text-sub: #b8a98e;
+            --accent-color: #e0bd44;
+            --gradient-start: #e0bd44;
+            --gradient-end: #f8e8a8;
+            --shadow-dark: rgba(0,0,0,0.45);
+            --shadow-light: rgba(248, 232, 168, 0.25);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html, body {
+            height: auto;
+            overflow-x: hidden;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--primary-bg);
+            color: var(--text-main);
+            min-height: 100vh;
+            position: relative;
+            background-image: 
+                radial-gradient(circle at 15% 20%, rgba(224, 189, 68, 0.15) 0%, transparent 45%),
+                radial-gradient(circle at 85% 65%, rgba(248, 232, 168, 0.11) 0%, transparent 50%),
+                radial-gradient(circle at 50% 90%, rgba(224, 189, 68, 0.09) 0%, transparent 40%);
+        }
+
+        /* ========== 入场动画定义 ========== */
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeInScale { from { opacity: 0; transform: scale(1.04); } to { opacity: 1; transform: scale(1); } }
+        @keyframes cardPop { from { opacity: 0; transform: scale(0.92); } to { opacity: 1; transform: scale(1); } }
+
+        .anim-nav       { opacity: 0; }
+        .anim-marquee   { opacity: 0; }
+        .anim-label     { opacity: 0; }
+        .anim-card      { opacity: 0; }
+
+        /* play类由loading完成后才加上，所以入场动画在loading消失后才播 */
+        .play .anim-nav { animation: slideDown 0.5s ease-out forwards; }
+        .play .anim-marquee { animation: slideUp 0.5s ease-out 0.15s forwards; }
+        .play .anim-label { animation: fadeInScale 0.5s ease-out 0.3s forwards; }
+        .play .anim-card { animation: cardPop 0.7s cubic-bezier(0.5, 0, 0.1, 1.5) forwards; }
+
+        /* ========== 全屏加载动画 ========== */
+        .page-loader {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-color: var(--primary-bg);
+            background-image: 
+                radial-gradient(circle at 15% 20%, rgba(224, 189, 68, 0.15) 0%, transparent 45%),
+                radial-gradient(circle at 85% 65%, rgba(248, 232, 168, 0.11) 0%, transparent 50%),
+                radial-gradient(circle at 50% 90%, rgba(224, 189, 68, 0.09) 0%, transparent 40%);
+            z-index: 99999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.6s ease;
+            gap: 18px; /* logo、进度条、文字之间的间距 */
+        }
+        .page-loader.hide {
+            opacity: 0;
+            pointer-events: none;
+        }
+        /* 加载页logo，和顶部导航logo同款样式 */
+        .loader-logo {
+            width: 60px; height: 60px;
+            border-radius: 12px;
+            overflow: hidden;
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 4px 16px var(--shadow-dark), inset 0 1px 0 var(--shadow-light);
+            animation: logoPulse 1.5s ease-in-out infinite; /* 呼吸灯效果 */
+        }
+        .loader-logo img { width: 100%; height: 100%; object-fit: cover; }
+        /* logo呼吸动画 */
+        @keyframes logoPulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 4px 16px var(--shadow-dark), inset 0 1px 0 var(--shadow-light); }
+            50% { transform: scale(1.06); box-shadow: 0 6px 24px rgba(224,189,68,0.4), inset 0 1px 0 var(--shadow-light); }
+        }
+        .loader-progress-bar {
+            width: 220px;
+            height: 8px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .loader-progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--gradient-start), var(--gradient-end));
+            border-radius: 2px;
+            transition: width 0.3s ease;
+        }
+        .loader-text {
+            color: var(--text-sub);
+            font-size: 13px;
+            letter-spacing: 1px;
+        }
+
+
+        /* ========== 顶部导航栏 ========== */
+        .top-nav {
+            background: rgba(35, 31, 27, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            padding: 12px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 10px 35px var(--shadow-dark), inset 0 1px 0 var(--shadow-light);
+            border-bottom: 1px solid rgba(224, 189, 68, 0.2);
+        }
+        .nav-logo-container { display: flex; align-items: center; gap: 10px; }
+        .nav-logo { 
+            width: 40px; height: 40px; border-radius: 50%; overflow: hidden; 
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 2px 8px var(--shadow-dark), inset 0 1px 0 var(--shadow-light);
+        }
+        .nav-logo img { width: 100%; height: 100%; object-fit: cover; }
+        .nav-title h2 { font-size: 16px; font-weight: 600; color: var(--accent-color); text-shadow: 0 0 8px rgba(224, 189, 68, 0.4); }
+
+        /* ========== 跑马灯 ========== */
+        .marquee-container {
+            background: linear-gradient(90deg, #2a2521, #3a342f);
+            padding: 10px 0; overflow: hidden; white-space: nowrap;
+            border-top: 1px solid rgba(224, 189, 68, 0.2);
+            border-bottom: 1px solid rgba(224, 189, 68, 0.2);
+            margin: 15px 0;
+        }
+        .marquee-content {
+            display: inline-block; padding-left: 100%;
+            animation: marquee 17s linear infinite;
+            color: var(--gradient-end);
+            font-weight: bold; font-size: 14px;
+        }
+        @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
+
+        /* ========== 横幅图 ========== */
+        .hero-banner {
+            margin: 0 15px 15px;
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: 0 8px 28px var(--shadow-dark), inset 0 1px 0 var(--shadow-light);
+            border: 0.3px solid rgba(224, 189, 68, 0.25);
+            aspect-ratio: 16 / 7;
+            background: rgba(60, 54, 46, 0.35);
+        }
+        .hero-banner img {
+            width: 100%; height: 100%; object-fit: cover; display: block;
+        }
+        @media (max-width: 480px) {
+            .hero-banner { border-radius: 14px; aspect-ratio: 16 / 8; }
+        }
+
+        /* ========== 模块容器 ========== */
+        .section-wrapper { margin: 0 15px 15px; transition: margin-bottom 0.3s ease; }
+        .section-wrapper.open { margin-bottom: 25px; }
+
+        /* ========== 模块按钮 ========== */
+        .section-label {
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            background: rgba(60, 54, 46, 0.42);
+            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            color: var(--gradient-end); font-size: 18px; font-weight: bold;
+            padding: 18px 30px; border-radius: 25px; cursor: pointer;
+            user-select: none; transition: all 0.2s ease;
+            position: relative; overflow: hidden;
+            border: 0.3px solid rgba(224, 189, 68, 0.35);
+            box-shadow: 0 8px 28px rgba(0,0,0,0.45), inset 0 1px 0 var(--shadow-light);
+        }
+        .section-label::before {
+            content: ''; position: absolute; top: 0; left: 0;
+            width: 80%; height: 70%;
+            background: radial-gradient(ellipse at top left, rgba(255,255,255,0.25) 0%, transparent 70%);
+            border-radius: 25px 0 0 0; pointer-events: none;
+        }
+        .section-label::after {
+            content: ''; position: absolute; top: 0; left: 0;
+            width: 100%; height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
+            border-radius: 25px 25px 0 0; pointer-events: none;
+        }
+        .section-label:active {
+            transform: translateY(2px) scale(0.99);
+            box-shadow: 0 3px 14px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.05);
+        }
+        .section-wrapper.open .section-label { font-size: 15px; padding: 15px 20px; border-radius: 20px; }
+        .section-wrapper.open .section-label::before { border-radius: 20px 0 0 0; }
+        .section-wrapper.open .section-label::after { border-radius: 20px 20px 0 0; }
+
+        /* ========== 箭头 ========== */
+        .arrow {
+            font-size: 12px; transition: transform 0.8s cubic-bezier(0.5, 0, 0.1, 1.5);
+            width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;
+            border-radius: 50%; background: rgba(0,0,0,0.2);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.1);
+        }
+        .section-wrapper.open .arrow { transform: rotate(180deg); }
+
+        /* ========== 模块内容区 ========== */
+        .section-content {
+            overflow: hidden; transition: all 0.8s cubic-bezier(0.5, 0, 0.1, 1.5);
+            max-height: 0; opacity: 0; visibility: hidden; margin-top: 15px;
+        }
+        .section-wrapper.open .section-content { max-height: 1000px; opacity: 1; visibility: visible; }
+
+        /* ========== 卡片网格 ========== */
+        .content-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+
+        /* ========== 单个卡片 ========== */
+        .content-card {
+            background: var(--card-bg); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            border-radius: 10px; overflow: hidden; text-align: center; padding: 15px 5px;
+            text-decoration: none; color: inherit; transition: all 0.2s ease;
+            box-shadow: 0 6px 20px var(--shadow-dark), inset 0 1px 0 var(--shadow-light);
+            border: 0.3px solid rgba(255,255,255,0.18);
+        }
+        .content-card:active { transform: translateY(1px); box-shadow: 0 2px 10px var(--shadow-dark); }
+        .card-icon {
+            width: 50px; height: 50px; margin: 0 auto 8px; border-radius: 12px;
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            display: flex; align-items: center; justify-content: center; font-size: 20px; overflow: hidden;
+            box-shadow: 0 2px 8px rgba(224, 189, 68, 0.3);
+        }
+        .card-icon img { width: 100%; height: 100%; object-fit: cover; }
+        .card-title { font-size: 13px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .card-desc { font-size: 11px; color: var(--text-sub); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+        /* 卡片依次入场延迟 */
+        .section-wrapper.open .content-card:nth-child(1) { animation-delay: 0.08s; }
+        .section-wrapper.open .content-card:nth-child(2) { animation-delay: 0.16s; }
+        .section-wrapper.open .content-card:nth-child(3) { animation-delay: 0.24s; }
+        .section-wrapper.open .content-card:nth-child(4) { animation-delay: 0.32s; }
+        .section-wrapper.open .content-card:nth-child(5) { animation-delay: 0.40s; }
+        .section-wrapper.open .content-card:nth-child(6) { animation-delay: 0.48s; }
+
+        /* ========== 弹窗 ========== */
+        .popup-mask {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.7); z-index: 9999;
+            display: none; justify-content: center; align-items: center; padding: 15px;
+        }
+        .popup-content {
+            background: rgba(35, 31, 27, 0.9); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+            border-radius: 15px; padding: 20px; width: 100%; max-width: 320px;
+            box-shadow: 0 15px 45px var(--shadow-dark), inset 0 1px 0 var(--shadow-light);
+            border: 0.3px solid rgba(224, 189, 68, 0.2);
+        }
+        .popup-close {
+            position: absolute; top: 10px; right: 15px; background: none; border: none;
+            font-size: 24px; color: var(--text-sub); cursor: pointer; padding: 0; line-height: 1;
+            width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;
+            border-radius: 50%; box-shadow: 0 2px 8px var(--shadow-dark); transition: all 0.2s ease;
+        }
+        .popup-close:active { transform: translateY(1px); }
+        .popup-title { font-size: 18px; color: var(--text-main); margin-bottom: 15px; text-align: center; font-weight: 600; }
+        .popup-body p { font-size: 14px; color: var(--text-sub); margin-bottom: 10px; line-height: 1.5; }
+        .popup-body p:last-child { margin-bottom: 0; }
+
+        /* ========== 底部页脚 ========== */
+        .page-footer {
+            background: rgba(35, 31, 27, 0.9); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            padding: 15px; border-top: 1px solid rgba(224, 189, 68, 0.2);
+            position: fixed; bottom: 0; left: 0; right: 0; z-index: 99;
+            box-shadow: 0 -10px 35px var(--shadow-dark), inset 0 -1px 0 var(--shadow-light);
+        }
+        .footer-content { display: flex; justify-content: center; align-items: center; color: #aaa; font-size: 12px; gap: 15px; }
+        .footer-label { color: var(--gradient-end); margin-right: 4px; }
+        .footer-value { color: #fff; font-weight: bold; }
+    </style>
+    <script src="js/jq.js"></script>
+</head>
+<body>
+
+     <!-- ========== 全屏加载动画 ========== -->
+    <div class="page-loader" id="pageLoader">
+        <!-- 呼吸灯效果 -->
+        <div class="loader-logo">
+            <img src="TX.jpeg" alt="Logo">
+        </div>
+        <div class="loader-progress-bar">
+            <div class="loader-progress-fill" id="loaderFill"></div>
+        </div>
+        <div class="loader-text" id="loaderText">加载中 0%</div>
+    </div>
+
+
+    <!-- ========== 弹窗 ========== -->
+    <div class="popup-mask" id="popupMask">
+        <div class="popup-content">
+            <button class="popup-close" id="popupClose">×</button>
+            <h3 class="popup-title">欢迎来到灰灰导航</h3>
+            <div class="popup-body">
+                <p><strong>📢 永久域名：灰灰.top</strong></p>
+                <p><strong>📢 灰灰旺号：700833448</strong></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== 顶部导航 ========== -->
+    <header class="top-nav anim-nav">
+        <div class="nav-logo-container">
+            <div class="nav-logo"><img src="TX.jpeg" alt="Logo"></div>
+            <div class="nav-title"><h2>永久导航域名：灰灰.top</h2></div>
+        </div>
+    </header>
+
+    <!-- ========== 跑马灯 ========== -->
+    <div class="marquee-container anim-marquee">
+        <div class="marquee-content">📢灰灰旺号：700833448 &nbsp;&nbsp;&nbsp;&nbsp; 永久域名：灰灰.top</div>
+    </div>
+
+    <!-- ========== 横幅图 ========== -->
+    <div class="hero-banner anim-label">
+        <img src="BJ.jpeg" alt="横幅图">
+    </div>
+
+    <!-- ========== 大💦推荐 ========== -->
+    <div class="section-wrapper anim-label open">
+        <div class="section-label" onclick="toggleSection(this.parentElement)">
+            「大💦推荐」<span class="arrow">▼</span>
+        </div>
+        <div class="section-content">
+            <div class="content-grid">
+                <a href="http://xnqwzf.tckqxx.com/app/register.php?site_id=1067&topId=2391785257121913&selfPlanId=379526" target="_blank" class="content-card anim-card">
+                    <div class="card-icon"><img src="ZH.jpeg" alt="纵横国际"></div>
+                    <div class="card-title">纵横国际</div>
+                    <div class="card-desc">新台大💦</div>
+                </a>
+                <a href="https://lncqc.jgqvji.com/app/register.php?site_id=1051&topId=6131786730461291" target="_blank" class="content-card anim-card">
+                    <div class="card-icon"><img src="Top1.jpeg" alt="Top1体育"></div>
+                    <div class="card-title">Top1体育</div>
+                    <div class="card-desc">700返488</div>
+                </a>                
+                <a href="https://aliua.tprsmi.com/app/register.php?site_id=1057&topId=9011785776123419" target="_blank" class="content-card anim-card">
+                    <div class="card-icon"><img src="XY.jpeg" alt="星耀国际"></div>
+                    <div class="card-title">星耀国际</div>
+                    <div class="card-desc">700返488</div>
+                </a>
+                <a href="https://rsesra.hfjcl.com/app/register.php?site_id=1064&pt=57F7038A-C37D-5488-6F01-5582A49232D3" target="_blank" class="content-card anim-card">
+                    <div class="card-icon"><img src="LH.jpeg" alt="领航国际"></div>
+                    <div class="card-title">领航国际</div>
+                    <div class="card-desc">大💦推荐</div>
+                </a>
+                <a href="https://psktkx.tckqxx.com/app/register.php?site_id=1065&topId=2451782259688600&selfPlanId=1080401" target="_blank" class="content-card anim-card">
+                    <div class="card-icon"><img src="LT.jpeg" alt="龙腾国际"></div>
+                    <div class="card-title">龙腾国际</div>
+                    <div class="card-desc">大💦推荐</div>
+                </a>
+                <a href="https://ybkvbz.tckqxx.com/app/register.php?site_id=1066&topId=4391782217700716&selfPlanId=1622128" target="_blank" class="content-card anim-card">
+                    <div class="card-icon"><img src="JXH.jpeg" alt="聚鑫汇"></div>
+                    <div class="card-title">聚鑫汇</div>
+                    <div class="card-desc">大💦推荐</div>
+                </a>
+                <a href="https://gfvgx.jgqvji.com/app/register.php?site_id=1030&pt=BBC5FFA9-9008-D028-27AD-783F387D9604" target="_blank" class="content-card anim-card">
+                    <div class="card-icon"><img src="DF.jpeg" alt="巅峰国际"></div>
+                    <div class="card-title">巅峰国际</div>
+                    <div class="card-desc">大💦推荐</div>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== 实用软件 ========== -->
+    <div class="section-wrapper anim-label open">
+        <div class="section-label" onclick="toggleSection(this.parentElement)">
+            「实用软件」<span class="arrow">▼</span>
+        </div>
+        <div class="section-content">
+            <div class="content-grid">
+                <a href="http://www.wwtalk.site/" target="_blank" class="content-card anim-card">
+                    <div class="card-icon"><img src="WW.jpeg" alt="旺商聊"></div>
+                    <div class="card-title">旺商聊</div>
+                    <div class="card-desc">加密聊天</div>
+                </a>
+                <a href="https://cdn4.telesco.pe/file/Telegram.apk?token=S9h-ON3OOPVvAiebRnHOZPLowtmCd78ncB3QCFJ1D5VPdv_7TsdJzrY0nEVI0zBAnqtEZgUTjdSXNICUxqHH4HV3mxbUT3YnFLjk1DxyeQqEh_Lcw10FgJJ-jhXp_fAzTWcGHnS2A2yLD4HrGL7ShSNGoWTX5iBexKeTOb5IZ-TmYOLBvQLZxO30SDOpc091u0OmoVJM7OBr_UMtdUmOMIyhtpg7hRB1Jc8EetC71Ct1maVa-LDXEJLae9nbzleOX3s0FbJ9j5UYgMOpmj_T-IbKYpTGCW2zyIJkuo7se2iawfQ9jHvUvazR--aFljoJ3Zxc6-TtdJW5fg6Hcud3DaOqr-2FAacG1ZU9RU2ilYL910fLSqaEM-FgqPciSNIhZE2tbFoNKCvUVGh458ohbcvjEJ0KTroqCaqRbwcTcHP-LyR0ApYITJQMGM6bATDgFY79_8JVTBsLk_EnSfAOvUZVvUD9Z7SvOfLlNSQTu2Gc67yOxx84KxW9vsJQuBgitkalePdoe0WdxFjiWb2ofjXFWRoAKukFlf16lAN4tkzhSEclC2rMajaDAWTb5L0t23L9YD2ZY2tC34xu0nlQ4EHYwL6pWPWZ1b_H483y-7Exl3yEr2djrQNxUAQzQoR7DVHhfT-tvukSzSfLm5Tstk3jUhkYCrENT8hSDNXFJ7my0XcTGhqYG-IFoYtl45mN3MkNa3FtCDZ0VtTP_3Y4e75_bYXiCOVsCMfWS0uuCM1fQwAIvV2wScisUuaQUAqvvpE-zCAY9fI4ax7CvpJZifig-Yktp2B7uBAeeSCY8QooVmjjkWlrqjY3Pn6uud9TiE4oGVVk9Vp_XR_T8jr-dWSbsrsRToz-Ff5dFN0DT0ktO0pdLpTrCdYEtV9nx0SB_b3m7sAVkQaVHeRXXux2LyDI9dh1wDI9qqbGNENzv_mPBg1WKEcy-7VSWAXGojTfdFghM9binEgcLhqZnbgOk4CmdQ4GHUpfJusXAT-TWX9NLEggkOhdvAvu0a2pFYd4df34Gyat4ZGmv7nl0UV6SqjY_aiXS2GBokFy77PKFV8msCR1R6o4GjKgk9sBOzKVYXoIeSALKjAecJrBVNhC07H4QLMKuky5Y_YA2Ptj3rTl2KaiewLaewVwJ_5bZgqwZlakpZBSS2tSAN3y_B5HgotTkL6RwirWabItXagBWoqwGZ9zJwvdjljr-q4KI2Dxj5KDv9y4dtE5fkKIJxIbCrgRHBwvaU8dCc8CXl0YXTkloTOu37_CqEbRrlZMIJpIu_k6OvYpQYtJqE8uKND9RDDprUCGaaKI6Or5mHpDHiUdcOV2mR6XH9OvPAVmDUG_DD-_DUG9i_dqs5KpUBO0zFR8Gy8PfoR144yqEr_3-QBg7097_bx95XO2P_MXEAS78o7g0q8My2H5H1wVjJLN_WJeqGHc5VtYWiKbnskYpYf2qSCZr8GK5_PwGRvJ71sdwEWntveuiEYi_0uzuakbm3S7NZrSn--6wL_p2aPEsiBfBs0VuWuA9Wm5YlLPndWe28mAC3ElWcHwCkrIbku1FWOx9uoR_B_Yur9Bx9jtrSdRb6bxjbYEWwTEX7g1homNzxne0FKNKarLb5O7q4_cq9pNWLl9cPazdXZttDOqc7kXc7ex4fL7Ggjus0TWGuERkrrgEvpb31nuCloy7_2Pej6_UMXTfJUa9JfKba3oilw" target="_blank" class="content-card anim-card">
+                    <div class="card-icon"><img src="FJ.jpeg" alt="telegram"></div>
+                    <div class="card-title">telegram</div>
+                    <div class="card-desc">直接下载</div>
+                </a>
+                <a href="https://www.haiouchat.com/?account=50289396&XinShareId=50289396" target="_blank" class="content-card anim-card">
+                    <div class="card-icon"><img src="HO.jpeg" alt="海鸥"></div>
+                    <div class="card-title">海鸥</div>
+                    <div class="card-desc">安全私密</div>
+                </a>              
+            </div>
+        </div>
+    </div>
+    
+    <!-- ========== 秘密基地 ========== -->
+    <div class="section-wrapper anim-label open">
+        <div class="section-label" onclick="toggleSection(this.parentElement)">
+            「秘密基地」<span class="arrow">▼</span>
+        </div>
+        <div class="section-content">
+            <div class="content-grid">
+                <a href="https://try3d2.te8trojm.com?invite=YBFYFX" target="_blank" class="content-card anim-card">
+                    <div class="card-icon"><img src="LLD.jpeg" alt="萝莉岛"></div>
+                    <div class="card-title">萝莉岛</div>
+                    <div class="card-desc">注意身体</div>
+                </a>    
+                <a href="https://wwbtr.lanzouu.com/imuB442phytc" target="_blank" class="content-card anim-card">
+                    <div class="card-icon"><img src="FL.jpeg" alt="飞轮VPN"></div>
+                    <div class="card-title">飞轮VPN</div>
+                    <div class="card-desc">免费vpn</div>
+                </a>                
+            </div>
+        </div>
+    </div>
+
+    <div style="height: 70px;"></div>
+
+    <!-- ========== 底部页脚 ========== -->
+    <footer class="page-footer">
+        <div class="footer-content">
+            <div class="footer-item"><span class="footer-label">永久域名：</span><span class="footer-value">灰灰.top</span></div>
+            <div class="footer-item"><span class="footer-label">灰灰旺号：</span><span class="footer-value">700833448</span></div>
+        </div>
+    </footer>
+
+    <!-- ========== JS逻辑 ========== -->
+    <script>
+        // ========== 加载动画逻辑（核心改动） ==========
+        window.addEventListener('DOMContentLoaded', function() {
+            const images = document.querySelectorAll('img');
+            const total = images.length;
+            let loaded = 0;
+
+            const fill = document.getElementById('loaderFill');
+            const text = document.getElementById('loaderText');
+            const loader = document.getElementById('pageLoader');
+
+            function updateProgress() {
+                loaded++;
+                const percent = Math.round((loaded / total) * 100);
+                fill.style.width = percent + '%';
+                text.textContent = '加载中 ' + percent + '%';
+                if (loaded >= total) {
+                    allLoaded();
+                }
+            }
+
+            function allLoaded() {
+                // 到100%后稍微停0.5秒让用户看到满条，再淡出
+                setTimeout(() => {
+                    loader.classList.add('hide');
+                    document.body.classList.add('play'); // 触发主页入场动画
+                    // 入场动画播完后再弹欢迎弹窗
+                    setTimeout(() => {
+                        document.getElementById('popupMask').style.display = 'flex';
+                    }, 300);
+                    // 动画结束后彻底隐藏loader
+                    setTimeout(() => { loader.style.display = 'none'; }, 600);
+                }, 500);
+            }
+
+            // 页面没图片（极端情况），直接完成
+            if (total === 0) {
+                fill.style.width = '100%';
+                allLoaded();
+                return;
+            }
+
+            // 逐个预加载图片，追踪进度
+            images.forEach(img => {
+                const newImg = new Image();
+                newImg.onload = updateProgress;
+                newImg.onerror = updateProgress; // 加载失败也计数，不卡死
+                newImg.src = img.src;
+            });
+
+            // 兜底：8秒后不管加载完没都强制进入，防止某张图卡死
+            setTimeout(() => {
+                if (loaded < total) {
+                    allLoaded();
+                }
+            }, 8000);
+        });
+
+        // ========== 模块展开/收起 ==========
+        function toggleSection(wrapper) {
+            wrapper.classList.toggle('open');
+        }
+
+        // ========== 弹窗关闭 ==========
+        const popupMask = document.getElementById('popupMask');
+        const popupClose = document.getElementById('popupClose');
+        popupClose.addEventListener('click', () => { popupMask.style.display = 'none'; });
+        popupMask.addEventListener('click', (e) => { if (e.target === popupMask) popupMask.style.display = 'none'; });
+    </script>
+</body>
+</html>
